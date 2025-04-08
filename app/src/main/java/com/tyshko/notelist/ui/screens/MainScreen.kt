@@ -26,11 +26,13 @@ fun MainScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-
+            .statusBarsPadding()
     ){
         Row(
             modifier = Modifier
-                .statusBarsPadding()
+                .background(color = Color.Black)
+                .fillMaxWidth()
+                .height(100.dp)
         ) {
             Text(
                 text = "Hello Dear name",
@@ -38,24 +40,26 @@ fun MainScreen(
                 color = Color.White
             )
         }
+        LazyColumn(
+            modifier = Modifier
+                .background(color = Color.Black, shape = RoundedCornerShape(
+                    topStart = 30.dp,
+                    topEnd = 30.dp,
+                    bottomEnd = 0.dp,
+                    bottomStart = 0.dp,
+                ))
+                .height(200.dp)
+
+        ) {
+            item {
+
+            }
+            item {
+
+            }
+        }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .background(color = Color.Black),
-        shape = RoundedCornerShape(
-            topStart = 30.dp,
-            topEnd = 30.dp,
-            bottomEnd = 0.dp,
-            bottomStart = 0.dp,
-        ),
-    ) {
-        item {
 
-        }
-        item {
-
-        }
-    }
 
 }

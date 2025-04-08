@@ -2,7 +2,7 @@ package com.tyshko.notelist.models.note
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
+import java.time.LocalDateTime
 
 @Entity
 data class Note(
@@ -10,5 +10,5 @@ data class Note(
     val id: Int? = null,
     val title: String,
     val description: String,
-    val date: Date,
+    val date: LocalDateTime = LocalDateTime.now(),
 )

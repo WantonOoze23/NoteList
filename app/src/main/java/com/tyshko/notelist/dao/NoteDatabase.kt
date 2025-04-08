@@ -1,4 +1,4 @@
-package com.tyshko.notelist.databse
+package com.tyshko.notelist.dao
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

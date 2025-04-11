@@ -20,11 +20,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val noteListModel = ViewModelProvider(this)[NoteListViewModel::class.java]
+        val noteListModel: NoteListViewModel = ViewModelProvider(this)[NoteListViewModel::class.java]
 
         setContent {
             NoteListTheme {
-                Surface(
+                setContent(
 
                 ) {
                     val navController = rememberNavController()
@@ -42,9 +42,9 @@ fun AppNavigation(navController: NavHostController, viewModel: NoteListViewModel
             MainScreen(
                 viewModel,
                 navController,
-                onCreateClick={},
-                onClick={}
+                onEvent = {}
             )
         }
+
     }
 }

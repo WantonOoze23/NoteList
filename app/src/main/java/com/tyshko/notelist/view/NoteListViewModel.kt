@@ -3,10 +3,12 @@ package com.tyshko.notelist.view
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tyshko.notelist.data.NoteDao
+import com.tyshko.notelist.models.note.Note
 import com.tyshko.notelist.models.state.NoteState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class NoteListViewModel(
     private val dao: NoteDao
@@ -31,7 +33,29 @@ class NoteListViewModel(
                 }
             }
             NoteEvent.SaveNote -> {
+                val title = _state.value.title
+                val description = _state.value.description
+                val date = _state.value.date
 
+                if (title.isBlank() || description.isBlank())
+                    return
+
+                val note = Note(
+                    title = title,
+                    description = description,
+                    date = date
+                )
+
+                viewModelScope.launch {
+                    dao.upsertNote(note)
+                }
+
+                _state.update { it.copy(
+                    isAddingNew = false,
+                    title = "",
+                    description = "",
+                    date = LocalDateTime.now()
+                ) }
             }
             is NoteEvent.SetDate -> {
                 _state.update { it.copy(

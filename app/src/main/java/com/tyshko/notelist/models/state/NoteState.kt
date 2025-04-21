@@ -8,6 +8,6 @@ data class NoteState(
     val title: String = "",
     val description: String = "",
     val date: LocalDateTime = LocalDateTime.now(),
-
+    val noteToEdit: Note? = null,
     val isAddingNew: Boolean = false
 )

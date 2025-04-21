@@ -20,6 +20,15 @@ class NoteListViewModel @Inject constructor(
     private val _state = MutableStateFlow(NoteState())
     val state: StateFlow<NoteState> = _state.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            repository.getNotes().collect { notes ->
+                _state.update { it.copy(notes = notes) }
+            }
+        }
+    }
+
+
     fun onEvent(event: NoteEvent){
         when(event){
             is NoteEvent.DeleteNote -> {
@@ -37,27 +46,39 @@ class NoteListViewModel @Inject constructor(
                 val title = _state.value.title
                 val description = _state.value.description
                 val date = _state.value.date
+                val existingNote = _state.value.noteToEdit
 
-                if (title.isBlank() || description.isBlank())
-                    return
+                if (title.isBlank() || description.isBlank()) return
 
-                val note = Note(
-                    title = title,
-                    description = description,
-                    date = date
-                )
-
-                viewModelScope.launch {
-                    repository.insertNote(note)
+                val note = if (existingNote != null) {
+                    existingNote.copy(
+                        title = title,
+                        description = description,
+                        date = date
+                    )
+                } else {
+                    Note(
+                        title = title,
+                        description = description,
+                        date = date
+                    )
                 }
 
-                _state.update { it.copy(
-                    isAddingNew = false,
-                    title = "",
-                    description = "",
-                    date = LocalDateTime.now()
-                ) }
+                viewModelScope.launch {
+                    repository.insertNote(note) // insert працює як add/update
+                }
+
+                _state.update {
+                    it.copy(
+                        isAddingNew = false,
+                        title = "",
+                        description = "",
+                        date = LocalDateTime.now(),
+                        noteToEdit = null
+                    )
+                }
             }
+
             is NoteEvent.SetDate -> {
                 _state.update { it.copy(
                     date = event.date
@@ -79,7 +100,18 @@ class NoteListViewModel @Inject constructor(
                 )
                 }
             }
+
+            is NoteEvent.EditNote -> {
+                _state.update {
+                    it.copy(
+                        title = event.note.title,
+                        description = event.note.description,
+                        date = event.note.date,
+                        isAddingNew = true,
+                        noteToEdit = event.note
+                    )
+                }
+            }
         }
     }
-
 }

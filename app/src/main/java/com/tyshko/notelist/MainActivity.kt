@@ -50,7 +50,7 @@ fun AppNavigation(navController: NavHostController, viewModel: NoteListViewModel
             MainScreen(
                 viewModel,
                 navController,
-                onEvent = {}
+                onEvent = {viewModel.onEvent(it)}
             )
         }
 

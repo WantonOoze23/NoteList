@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("org.jetbrains.kotlin.kapt")
+    kotlin("kapt")
 }
 
 android {
@@ -61,7 +61,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Room
+    kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
-    annotationProcessor(libs.androidx.room.compiler)
 
+    // Dagger
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
 }

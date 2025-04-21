@@ -2,28 +2,29 @@ package com.tyshko.notelist.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tyshko.notelist.data.NoteDao
 import com.tyshko.notelist.models.note.Note
 import com.tyshko.notelist.models.state.NoteState
+import com.tyshko.notelist.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import javax.inject.Inject
 
-class NoteListViewModel(
-    private val dao: NoteDao
+class NoteListViewModel @Inject constructor(
+    private val repository: NoteRepository
 ): ViewModel() {
-    companion object{
-
-    }
 
     private val _state = MutableStateFlow(NoteState())
+    val state: StateFlow<NoteState> = _state.asStateFlow()
 
     fun onEvent(event: NoteEvent){
         when(event){
             is NoteEvent.DeleteNote -> {
                 viewModelScope.launch{
-                    dao.deleteNote(event.note)
+                    repository.deleteNote(event.note)
                 }
             }
             NoteEvent.HideDialog -> {
@@ -47,7 +48,7 @@ class NoteListViewModel(
                 )
 
                 viewModelScope.launch {
-                    dao.upsertNote(note)
+                    repository.insertNote(note)
                 }
 
                 _state.update { it.copy(

@@ -9,7 +9,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -19,7 +22,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tyshko.notelist.models.note.Note
-import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 @Composable
@@ -28,19 +30,40 @@ fun NoteCard(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 16.dp,
     onDeleteClick: () -> Unit,
-    onEditClick: () -> Unit
-) {
-    val backgroundColor = remember(note.id) {
-        val base = 200
-        Color(
-            red = base + Random.nextInt(55),
-            green = base + Random.nextInt(55),
-            blue = base + Random.nextInt(55),
-            alpha = 255
+    onEditClick: () -> Unit,
+    onClick: () -> Unit
+) {val backgroundColor = remember(note.id) {
+    val base = 200
+    Color(
+        red = base + Random.nextInt(55),
+        green = base + Random.nextInt(55),
+        blue = base + Random.nextInt(55),
+        alpha = 255
+    )
+}
+
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Note") },
+            text = { Text("Are you sure you want to delete this note?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDeleteClick()
+                    showDeleteDialog = false
+                }) {
+                    Text("Delete", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
         )
     }
-
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")
 
     Box(
         modifier = modifier
@@ -48,41 +71,24 @@ fun NoteCard(
             .fillMaxWidth()
             .shadow(4.dp, RoundedCornerShape(cornerRadius))
             .background(backgroundColor, RoundedCornerShape(cornerRadius))
+            .clickable { onClick() }
             .padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = note.title,
-                        fontSize = 20.sp,
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = note.description,
-                        fontSize = 16.sp,
-                        color = Color.DarkGray
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = note.date.format(formatter),
-                        fontSize = 12.sp,
-                        color = Color.Gray
-                    )
                 }
-                Row(
-                    verticalAlignment = Alignment.Top
-                ) {
+
+                Row {
                     IconButton(onClick = onEditClick) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -90,7 +96,8 @@ fun NoteCard(
                             tint = Color(0xFF1976D2)
                         )
                     }
-                    IconButton(onClick = onDeleteClick) {
+
+                    IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete note",
@@ -99,6 +106,8 @@ fun NoteCard(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

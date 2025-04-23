@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tyshko.notelist.repository.NoteRepository
 import com.tyshko.notelist.ui.screens.MainScreen
+import com.tyshko.notelist.ui.screens.NoteScreen
 import com.tyshko.notelist.ui.theme.NoteListTheme
 import com.tyshko.notelist.view.NoteListViewModel
 import com.tyshko.notelist.view.NoteListViewModelFactory
@@ -52,6 +53,12 @@ fun AppNavigation(navController: NavHostController, viewModel: NoteListViewModel
                 navController,
                 onEvent = {viewModel.onEvent(it)}
             )
+        }
+        composable("detail/{noteId}") { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId")?.toIntOrNull()
+            if (noteId != null) {
+                NoteScreen(noteId, viewModel, navController)
+            }
         }
 
     }

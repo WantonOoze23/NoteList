@@ -37,6 +37,9 @@ fun MainScreen(
     onEvent: (NoteEvent) -> Unit
 ){
     val state = viewModel.state.collectAsState().value
+
+    val sortedNotes = state.notes.sortedByDescending { it.date }
+
     Scaffold(
         modifier = Modifier
             .statusBarsPadding(),
@@ -62,24 +65,31 @@ fun MainScreen(
                     text = "Hello dear Noter",
                     color = Color.White,
                     fontSize = 20.sp,
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
                     )
                 }
             }
-            items(state.notes.size) { index ->
-                val note = state.notes[index]
+            items(sortedNotes.size) { index ->
+                val note = sortedNotes[index]
+
                 NoteCard(note = note,
                     onDeleteClick = { viewModel.onEvent(NoteEvent.DeleteNote(note)) },
-                    onEditClick = { viewModel.onEvent(NoteEvent.EditNote(note)) }
+                    onEditClick = { viewModel.onEvent(NoteEvent.EditNote(note)) },
+                    onClick = {
+                        navHostController.navigate("detail/${note.id}")
+                    }
                 )
-            }
-            item{
-                val testNote = Note(1, "Dear", "Lorehm ipsum")
-                NoteCard(testNote, modifier = Modifier, onEditClick = {}, onDeleteClick = {})
             }
         }
     }
 
     if (state.isAddingNew) {
+        AddEditNoteScreen(
+            noteId = TODO(),
+            viewModel = TODO(),
+            navController = TODO()
+        )
         AlertDialog(
             onDismissRequest = {
                 onEvent(NoteEvent.HideDialog)

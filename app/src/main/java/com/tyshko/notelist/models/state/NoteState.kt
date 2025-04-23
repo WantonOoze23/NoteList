@@ -9,5 +9,5 @@ data class NoteState(
     val description: String = "",
     val date: LocalDateTime = LocalDateTime.now(),
     val noteToEdit: Note? = null,
-    val isAddingNew: Boolean = false
+    val isAddingNew: Boolean = false,
 )

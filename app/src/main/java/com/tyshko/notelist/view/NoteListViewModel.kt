@@ -65,7 +65,7 @@ class NoteListViewModel @Inject constructor(
                 }
 
                 viewModelScope.launch {
-                    repository.insertNote(note) // insert працює як add/update
+                    repository.insertNote(note)
                 }
 
                 _state.update {

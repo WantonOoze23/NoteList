@@ -12,5 +12,5 @@ sealed interface NoteEvent {
     object HideDialog: NoteEvent
     data class DeleteNote(val note: Note): NoteEvent
     data class EditNote(val note: Note): NoteEvent
-    //data object UpdateNote : NoteEvent
+    data object UpdateNote : NoteEvent
 }

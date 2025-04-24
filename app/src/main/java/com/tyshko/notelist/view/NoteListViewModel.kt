@@ -112,6 +112,38 @@ class NoteListViewModel @Inject constructor(
                     )
                 }
             }
+            NoteEvent.UpdateNote -> {
+                val note = _state.value.noteToEdit ?: return
+                val updatedNote = note.copy(
+                    title = _state.value.title,
+                    description = _state.value.description,
+                    date = _state.value.date
+                )
+                viewModelScope.launch {
+                    repository.insertNote(updatedNote)
+                }
+                _state.update {
+                    it.copy(
+                        title = "",
+                        description = "",
+                        date = LocalDateTime.now(),
+                        noteToEdit = null
+                    )
+                }
+            }
+
         }
     }
+
+    fun clearNoteInput() {
+        _state.update {
+            it.copy(
+                title = "",
+                description = "",
+                date = LocalDateTime.now(),
+                noteToEdit = null
+            )
+        }
+    }
+
 }

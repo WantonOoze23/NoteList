@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tyshko.notelist.repository.NoteRepository
+import com.tyshko.notelist.ui.screens.AddEditNoteScreen
 import com.tyshko.notelist.ui.screens.MainScreen
 import com.tyshko.notelist.ui.screens.NoteScreen
 import com.tyshko.notelist.ui.theme.NoteListTheme
@@ -60,6 +61,13 @@ fun AppNavigation(navController: NavHostController, viewModel: NoteListViewModel
                 NoteScreen(noteId, viewModel, navController)
             }
         }
-
+        composable("addEdit?noteId={noteId}") { backStackEntry ->
+            val noteId = backStackEntry.arguments?.getString("noteId")?.toIntOrNull()
+            AddEditNoteScreen(
+                noteId = noteId,
+                viewModel = viewModel,
+                navController = navController
+            )
+        }
     }
 }

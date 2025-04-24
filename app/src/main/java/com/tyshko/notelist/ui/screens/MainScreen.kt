@@ -44,7 +44,10 @@ fun MainScreen(
         modifier = Modifier
             .statusBarsPadding(),
         floatingActionButton = {
-            FloatingActionButton(onClick = {onEvent(NoteEvent.ShowDialog)}) {
+            FloatingActionButton(onClick = {
+                viewModel.clearNoteInput()
+                navHostController.navigate("addEdit")
+            }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add note"
@@ -75,7 +78,10 @@ fun MainScreen(
 
                 NoteCard(note = note,
                     onDeleteClick = { viewModel.onEvent(NoteEvent.DeleteNote(note)) },
-                    onEditClick = { viewModel.onEvent(NoteEvent.EditNote(note)) },
+                    onEditClick = {
+                        viewModel.onEvent(NoteEvent.EditNote(note))
+                        navHostController.navigate("addEdit?noteId=${note.id}")
+                    },
                     onClick = {
                         navHostController.navigate("detail/${note.id}")
                     }
@@ -84,46 +90,48 @@ fun MainScreen(
         }
     }
 
-    if (state.isAddingNew) {
-        AddEditNoteScreen(
-            noteId = TODO(),
-            viewModel = TODO(),
-            navController = TODO()
-        )
-        AlertDialog(
-            onDismissRequest = {
-                onEvent(NoteEvent.HideDialog)
-            },
-            confirmButton = {
-                Button(onClick = {
-                    onEvent(NoteEvent.SaveNote)
-                }) {
-                    Text("Save")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    onEvent(NoteEvent.HideDialog)
-                }) {
-                    Text("Cancel")
-                }
-            },
-            title = { Text("Add Note") },
-            text = {
-                Column {
-                    TextField(
-                        value = state.title,
-                        onValueChange = { onEvent(NoteEvent.SetTitle(it)) },
-                        label = { Text("Title") }
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TextField(
-                        value = state.description,
-                        onValueChange = { onEvent(NoteEvent.SetDescription(it)) },
-                        label = { Text("Description") }
-                    )
-                }
-            }
-        )
-    }
+//    if (state.isAddingNew) {
+//        AddEditNoteScreen(
+//            noteId = 0,
+//            viewModel = viewModel,
+//            navController = navHostController.navigate("addEdit")
+//        )
+
+
+//        AlertDialog(
+//            onDismissRequest = {
+//                onEvent(NoteEvent.HideDialog)
+//            },
+//            confirmButton = {
+//                Button(onClick = {
+//                    onEvent(NoteEvent.SaveNote)
+//                }) {
+//                    Text("Save")
+//                }
+//            },
+//            dismissButton = {
+//                TextButton(onClick = {
+//                    onEvent(NoteEvent.HideDialog)
+//                }) {
+//                    Text("Cancel")
+//                }
+//            },
+//            title = { Text("Add Note") },
+//            text = {
+//                Column {
+//                    TextField(
+//                        value = state.title,
+//                        onValueChange = { onEvent(NoteEvent.SetTitle(it)) },
+//                        label = { Text("Title") }
+//                    )
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    TextField(
+//                        value = state.description,
+//                        onValueChange = { onEvent(NoteEvent.SetDescription(it)) },
+//                        label = { Text("Description") }
+//                    )
+//                }
+//            }
+//        )
+//    }
 }

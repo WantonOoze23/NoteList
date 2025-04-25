@@ -1,7 +1,6 @@
 package com.tyshko.notelist
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
 import com.tyshko.notelist.dao.NoteDatabase
 import com.tyshko.notelist.data.NoteDao

@@ -1,12 +1,18 @@
 package com.tyshko.notelist.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,7 +37,6 @@ fun NoteCard(
     modifier: Modifier = Modifier,
     cornerRadius: Dp = 16.dp,
     onDeleteClick: () -> Unit,
-    onEditClick: () -> Unit,
     onClick: () -> Unit
 ) {val backgroundColor = remember(note.id) {
     val base = 200
@@ -48,7 +54,7 @@ fun NoteCard(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text("Delete Note") },
-            text = { Text("Are you sure you want to delete this note?") },
+            text = { Text("Are you sure you want to delete note ${note.title}?") },
             confirmButton = {
                 TextButton(onClick = {
                     onDeleteClick()
@@ -89,21 +95,44 @@ fun NoteCard(
                 }
 
                 Row {
-                    IconButton(onClick = onEditClick) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit note",
-                            tint = Color(0xFF1976D2)
-                        )
-                    }
+                    val infiniteTransition = rememberInfiniteTransition(label = "jump_animation")
 
-                    IconButton(onClick = { showDeleteDialog = true }) {
+                    val offsetY by infiniteTransition.animateFloat(
+                        initialValue = 0f,
+                        targetValue = -6f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 700, easing = LinearOutSlowInEasing),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "offsetY"
+                    )
+
+                    val scale by infiniteTransition.animateFloat(
+                        initialValue = 1f,
+                        targetValue = 1.1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 700),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "scale"
+                    )
+
+                    IconButton(
+                        onClick = { showDeleteDialog = true },
+                        modifier = Modifier
+                            .offset(y = Dp(offsetY))
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                            }
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete note",
                             tint = Color.Red
                         )
                     }
+
                 }
             }
 

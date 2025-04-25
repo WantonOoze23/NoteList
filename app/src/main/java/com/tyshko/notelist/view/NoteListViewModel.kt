@@ -36,12 +36,7 @@ class NoteListViewModel @Inject constructor(
                     repository.deleteNote(event.note)
                 }
             }
-            NoteEvent.HideDialog -> {
-                _state.update { it.copy(
-                    isAddingNew = false
-                )
-                }
-            }
+
             NoteEvent.SaveNote -> {
                 val title = _state.value.title
                 val description = _state.value.description
@@ -93,12 +88,6 @@ class NoteListViewModel @Inject constructor(
                 _state.update { it.copy(
                     title = event.title
                 ) }
-            }
-            NoteEvent.ShowDialog -> {
-                _state.update { it.copy(
-                    isAddingNew = true
-                )
-                }
             }
 
             is NoteEvent.EditNote -> {

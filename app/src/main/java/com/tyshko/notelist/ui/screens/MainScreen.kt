@@ -1,16 +1,12 @@
 package com.tyshko.notelist.ui.screens
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -99,7 +95,7 @@ fun MainScreen(
     ) {
         LazyColumn(
             modifier = Modifier
-                .padding(bottom = 8.dp)
+                .padding(bottom = 30.dp)
         ) {
             item {
                 Column(
@@ -146,14 +142,6 @@ fun MainScreen(
                             this.translationY = offsetY
                         }
                         .animateItemPlacement(tween(300))
-                )
-            }
-
-            item {
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
                 )
             }
         }

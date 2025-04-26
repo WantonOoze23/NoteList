@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -11,12 +12,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,6 +62,44 @@ fun AddEditNoteScreen(
                     )
                 }
             )
+        },
+                modifier = Modifier
+                .statusBarsPadding()
+            .fillMaxSize(),
+        floatingActionButton = {
+            val infiniteTransition = rememberInfiniteTransition(label = "fab_animation")
+
+            val rotation by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = 360f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 3000) ,
+                    repeatMode = RepeatMode.Restart
+                ),
+                label = "rotation"
+            )
+
+            FloatingActionButton(
+                onClick = {
+                    if (noteId != null) {
+                        viewModel.onEvent(NoteEvent.UpdateNote)
+                    } else {
+                        viewModel.onEvent(NoteEvent.SaveNote)
+                    }
+                    navController.popBackStack()
+                },
+                containerColor = if (isEnabled) color else Color.LightGray,
+                modifier = Modifier
+                    .graphicsLayer {
+                        rotationZ = if (isEnabled) rotation else 0f
+                    }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add note",
+                    tint = Color.White
+                )
+            }
         }
     ) { padding ->
         Column(
@@ -178,23 +219,6 @@ fun AddEditNoteScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
                 ) {
                     Text("Cancel", color = Color.Black)
-                }
-                Button(
-                    onClick = {
-                        if (noteId != null) {
-                            viewModel.onEvent(NoteEvent.UpdateNote)
-                        } else {
-                            viewModel.onEvent(NoteEvent.SaveNote)
-                        }
-                        navController.popBackStack()
-                    },
-                    enabled = isEnabled,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isEnabled) color else Color.LightGray,
-                        contentColor = if (isEnabled) Color.White else Color.DarkGray
-                    )
-                ) {
-                    Text("Save")
                 }
             }
         }
